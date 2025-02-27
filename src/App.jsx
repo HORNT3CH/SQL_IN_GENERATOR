@@ -6,6 +6,9 @@ import App1 from "./components/App1";
 import App2 from "./components/App2";
 import App3 from "./components/App3";
 import TodoApp from "./components/TodoApp";
+import XmlToJsonConverter from "./components/XmlToJsonConverter";
+import SqlPrettifier from "./components/SqlPrettifier";
+import CaseConverter from "./components/CaseConverter";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
@@ -14,7 +17,7 @@ const App = () => {
   return (
     <Router>
       <div className={darkMode ? "bg-dark text-white" : "bg-light text-dark"} style={{ minHeight: "100vh" }}>
-        <Navbar bg={darkMode ? "dark" : "light"} variant={darkMode ? "dark" : "light"} expand="lg">
+        <Navbar bg={darkMode ? "dark" : "light"} variant={darkMode ? "dark" : "light"} expand="lg" className="shadow-sm">
           <Container>
             <Navbar.Brand as={Link} to="/">MIS Tools</Navbar.Brand>
             <Nav className="me-auto">
@@ -22,7 +25,10 @@ const App = () => {
               <Nav.Link as={Link} to="/app1">Remove Double Quotes</Nav.Link>
               <Nav.Link as={Link} to="/app2">Create From List</Nav.Link>
               <Nav.Link as={Link} to="/app3">Saved Queries</Nav.Link>
-              <Nav.Link as={Link} to="/todo">Todo App</Nav.Link>
+              <Nav.Link as={Link} to="/todo">Todo</Nav.Link>
+              <Nav.Link as={Link} to="/xml">XML to JSON</Nav.Link>
+              <Nav.Link as={Link} to="/sql">SQL Prettifier</Nav.Link>
+              <Nav.Link as={Link} to="/case">Case Converter</Nav.Link>
             </Nav>
             <Button variant={darkMode ? "light" : "dark"} onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? "Light Mode" : "Dark Mode"}
@@ -35,6 +41,9 @@ const App = () => {
           <Route path="/app2" element={<App2 />} />
           <Route path="/app3" element={<App3 />} />
           <Route path="/todo" element={<TodoApp />} />
+          <Route path="/xml" element={<XmlToJsonConverter />} />
+          <Route path="/sql" element={<SqlPrettifier />} />
+          <Route path="/case" element={<CaseConverter />} />
         </Routes>
       </div>
     </Router>

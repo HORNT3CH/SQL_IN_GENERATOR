@@ -1,23 +1,32 @@
-import { Container, Card } from "react-bootstrap";
+import { Container, Card, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const Home = () => (
   <Container className="mt-4 text-center">
     <h2>MIS Applications</h2>
-    <div className="d-flex justify-content-center gap-3">
-      <Card bg="primary" text="white" className="p-2">
-        <Card.Title><Link to="/app1" className="text-white text-decoration-none">NOT/IN Creator (Remove Double Quotes)</Link></Card.Title>
-      </Card>
-      <Card bg="primary" text="white" className="p-2">
-        <Card.Title><Link to="/app2" className="text-white text-decoration-none">NOT/IN Creator (From Unquoted List)</Link></Card.Title>
-      </Card>
-      <Card bg="primary" text="white" className="p-2">
-        <Card.Title><Link to="/app3" className="text-white text-decoration-none">Saved Queries</Link></Card.Title>
-      </Card>
-      <Card bg="primary" text="white" className="p-2">
-        <Card.Title><Link to="/todo" className="text-white text-decoration-none">Todo App</Link></Card.Title>
-      </Card>
-    </div>
+    <Row className="justify-content-center mt-3">
+      {[
+        { to: "/app1", title: "NOT/IN Creator (Remove Double Quotes)" },
+        { to: "/app2", title: "NOT/IN Creator (From Unquoted List)" },
+        { to: "/app3", title: "Saved Queries" },
+        { to: "/todo", title: "Todo App" },
+        { to: "/xml", title: "XML to JSON Converter" },
+        { to: "/sql", title: "SQL Prettifier" },
+        { to: "/case", title: "Case Converter" },
+      ].map((item, index) => (
+        <Col key={index} xs={12} sm={6} md={4} lg={3} className="mb-3">
+          <Card className="h-100 shadow">
+            <Card.Body className="d-flex align-items-center justify-content-center">
+              <Card.Title className="text-center">
+                <Link to={item.to} className="stretched-link text-dark text-decoration-none">
+                  {item.title}
+                </Link>
+              </Card.Title>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
+    </Row>
   </Container>
 );
 
