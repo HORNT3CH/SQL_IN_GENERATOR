@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Form, ListGroup, InputGroup } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, ListGroup, InputGroup, Badge } from "react-bootstrap";
 
 const LOCAL_STORAGE_KEY = "todo_categories";
 
@@ -23,7 +23,6 @@ const TodoApp = () => {
     setCategories(updatedCategories);
   };
 
-  // Add a new category
   const addCategory = () => {
     if (newCategory.trim() === "") return;
     const updatedCategories = [...categories, { id: Date.now(), name: newCategory, todos: [] }];
@@ -31,12 +30,10 @@ const TodoApp = () => {
     setNewCategory("");
   };
 
-  // Start editing a category
   const startEditingCategory = (id, name) => {
     setEditingCategory({ id, name });
   };
 
-  // Save edited category
   const saveEditedCategory = () => {
     if (editingCategory.name.trim() === "") return;
     const updatedCategories = categories.map(cat =>
@@ -46,32 +43,28 @@ const TodoApp = () => {
     setEditingCategory({ id: null, name: "" });
   };
 
-  // Delete a category
   const deleteCategory = id => {
     const updatedCategories = categories.filter(cat => cat.id !== id);
     updateLocalStorage(updatedCategories);
     if (selectedCategory?.id === id) setSelectedCategory(null);
   };
 
-  // Add a new todo
   const addTodo = () => {
     if (newTodo.trim() === "" || !selectedCategory) return;
     const updatedCategories = categories.map(cat =>
       cat.id === selectedCategory.id
-        ? { ...cat, todos: [...cat.todos, { id: Date.now(), text: newTodo }] }
+        ? { ...cat, todos: [...cat.todos, { id: Date.now(), text: newTodo, done: false }] }
         : cat
     );
     updateLocalStorage(updatedCategories);
     setNewTodo("");
-    setSelectedCategory(updatedCategories.find(cat => cat.id === selectedCategory.id)); // Update UI
+    setSelectedCategory(updatedCategories.find(cat => cat.id === selectedCategory.id));
   };
 
-  // Start editing a todo
   const startEditingTodo = (todoId, text) => {
     setEditingTodo({ id: todoId, text });
   };
 
-  // Save edited todo
   const saveEditedTodo = (categoryId) => {
     if (editingTodo.text.trim() === "") return;
     const updatedCategories = categories.map(cat =>
@@ -86,10 +79,9 @@ const TodoApp = () => {
     );
     updateLocalStorage(updatedCategories);
     setEditingTodo({ id: null, text: "" });
-    setSelectedCategory(updatedCategories.find(cat => cat.id === categoryId)); // Update UI
+    setSelectedCategory(updatedCategories.find(cat => cat.id === categoryId));
   };
 
-  // Delete a todo
   const deleteTodo = (categoryId, todoId) => {
     const updatedCategories = categories.map(cat =>
       cat.id === categoryId
@@ -97,13 +89,27 @@ const TodoApp = () => {
         : cat
     );
     updateLocalStorage(updatedCategories);
-    setSelectedCategory(updatedCategories.find(cat => cat.id === categoryId)); // Update UI
+    setSelectedCategory(updatedCategories.find(cat => cat.id === categoryId));
+  };
+
+  const toggleTodoDone = (categoryId, todoId) => {
+    const updatedCategories = categories.map(cat =>
+      cat.id === categoryId
+        ? {
+            ...cat,
+            todos: cat.todos.map(todo =>
+              todo.id === todoId ? { ...todo, done: !todo.done } : todo
+            )
+          }
+        : cat
+    );
+    updateLocalStorage(updatedCategories);
+    setSelectedCategory(updatedCategories.find(cat => cat.id === categoryId));
   };
 
   return (
     <Container className="mt-4">
       <Row>
-        {/* Category List */}
         <Col md={4}>
           <Card>
             <Card.Header>Categories</Card.Header>
@@ -133,6 +139,7 @@ const TodoApp = () => {
                           onChange={e => setEditingCategory({ ...editingCategory, name: e.target.value })}
                         />
                         <Button variant="success" onClick={saveEditedCategory}>Save</Button>
+                        <Button variant="success" onClick={() => saveEditedTodo(selectedCategory.id)}>Save Todo</Button>
                       </InputGroup>
                     ) : (
                       <span>{category.name}</span>
@@ -152,7 +159,6 @@ const TodoApp = () => {
           </Card>
         </Col>
 
-        {/* Todo List */}
         <Col md={8}>
           {selectedCategory && (
             <Card>
@@ -171,20 +177,19 @@ const TodoApp = () => {
                 </InputGroup>
                 <ListGroup>
                   {selectedCategory.todos.map(todo => (
-                    <ListGroup.Item key={todo.id} className="d-flex justify-content-between align-items-center">
-                      {editingTodo.id === todo.id ? (
-                        <InputGroup>
-                          <Form.Control
-                            type="text"
-                            value={editingTodo.text}
-                            onChange={e => setEditingTodo({ ...editingTodo, text: e.target.value })}
-                          />
-                          <Button variant="success" onClick={() => saveEditedTodo(selectedCategory.id)}>Save</Button>
-                        </InputGroup>
-                      ) : (
-                        <span>{todo.text}</span>
-                      )}
-                      <div>
+                    <ListGroup.Item
+                      key={todo.id}
+                      className={`d-flex justify-content-between align-items-center ${todo.done ? 'bg-light text-muted' : ''}`}
+                      onClick={() => toggleTodoDone(selectedCategory.id, todo.id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="d-flex align-items-center">
+                        <span style={{ textDecoration: todo.done ? "underline" : "none" }}>
+                          {todo.text}
+                        </span>
+                        {todo.done && <Badge bg="success" className="ms-2">Task Complete</Badge>}
+                      </div>
+                      <div onClick={e => e.stopPropagation()}>
                         {editingTodo.id !== todo.id && (
                           <>
                             <Button variant="warning" size="sm" onClick={() => startEditingTodo(todo.id, todo.text)}>

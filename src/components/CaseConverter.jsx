@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Container, Form, Button, Alert } from "react-bootstrap";
 
 const toLowerCase = (str) => str.toLowerCase();
 const toUpperCase = (str) => str.toUpperCase();
@@ -36,6 +37,7 @@ const CaseConverter = () => {
   const [caseType, setCaseType] = useState("lowercase");
   const [convertedText, setConvertedText] = useState("");
   const [warning, setWarning] = useState("");
+  const [copiedToClipboard, setCopiedToClipboard] = useState("");
 
   const handleConvert = () => {
     if (text.trim() === "") {
@@ -43,57 +45,63 @@ const CaseConverter = () => {
       setTimeout(() => setWarning(""), 3000); // Clear warning after 3 seconds
       return;
     }
+    setWarning(""); // Clear warning when text is valid
     setConvertedText(caseFunctions[caseType](text));
   };
 
   const handleCopy = () => {
-    const textarea = document.createElement("textarea");
-    textarea.value = convertedText;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-    alert("Copied to clipboard!");
+    if (convertedText) {
+      const textarea = document.createElement("textarea");
+      textarea.value = convertedText;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      setCopiedToClipboard("Copied to clipboard!");
+      setTimeout(() => setCopiedToClipboard(""), 3000); // Clear message after 3 seconds
+    }
   };
 
   return (
-    <div className="container mt-4">
-      <h3>Case Converter</h3>
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Enter text here"
-        style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-      />
-      {warning && (
-        <div className="alert alert-danger mt-2" role="alert">
-        {warning}
-      </div>
-      )}
-      <select
-        value={caseType}
-        onChange={(e) => setCaseType(e.target.value)}
-        style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-      >
-        {Object.keys(caseFunctions).map((key) => (
-          <option key={key} value={key}>
-            {key.charAt(0).toUpperCase() + key.slice(1)}
-          </option>
-        ))}
-      </select>
-      <button onClick={handleConvert} style={{ width: "100%", padding: "10px", marginBottom: "10px", background: "#007bff", color: "#fff", border: "none", cursor: "pointer", borderRadius: "5px" }}>
-        Convert
-      </button>
-      {convertedText && (
-        <>
-          <p style={{ padding: "10px", background: "#fff", borderRadius: "5px", wordWrap: "break-word" }}>{convertedText}</p>
-          <button onClick={handleCopy} style={{ width: "100%", padding: "10px", background: "#28a745", color: "#fff", border: "none", cursor: "pointer", borderRadius: "5px" }}>
-            Copy
-          </button>
-        </>
-      )}
-    </div>
+    <Container className="mt-4">
+      <h3 className="text-center">Case Converter</h3>
+      <Form>
+        <Form.Group className="mb-3">
+          <Form.Control
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Enter text here"
+          />
+        </Form.Group>
+
+        {warning && <Alert variant="danger">{warning}</Alert>}
+
+        <Form.Group className="mb-3">
+          <Form.Select value={caseType} onChange={(e) => setCaseType(e.target.value)}>
+            {Object.keys(caseFunctions).map((key) => (
+              <option key={key} value={key}>
+                {key.charAt(0).toUpperCase() + key.slice(1)}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+
+        <Button variant="primary" className="w-100 mb-3" onClick={handleConvert}>
+          Convert
+        </Button>
+
+        {convertedText && (
+          <>
+            <div className="p-3 bg-light text-dark border rounded text-center">{convertedText}</div>
+            <Button variant="success" className="w-100 mt-3" onClick={handleCopy}>
+              Copy
+            </Button>
+            {copiedToClipboard && <Alert variant="success" className="mt-3">{copiedToClipboard}</Alert>}
+          </>
+        )}
+      </Form>
+    </Container>
   );
 };
 

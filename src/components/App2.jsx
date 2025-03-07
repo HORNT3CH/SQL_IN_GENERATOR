@@ -5,6 +5,8 @@ const App2 = () => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [sqlType, setSqlType] = useState("IN"); // State for IN or NOT IN selection
+  const [warning, setWarning] = useState("");
+  const [copiedQuery, setCopiedQuery] = useState("");
 
   const convertToSQL = () => {
     const items = input
@@ -12,17 +14,19 @@ const App2 = () => {
       .map(item => item.trim()) // Trim whitespace
       .filter(item => item.length > 0); // Remove empty lines
 
-    if (items.length > 0) {
-      setOutput(`${sqlType} (\n'${items.join("',\n'")}'\n)`);
+    if (items.length === 0) {
+      setWarning("Please enter a list before converting.");
+      setTimeout(() => setWarning(""), 3000);      
     } else {
-      setOutput(""); // Prevent empty SQL clause
+      setOutput(`${sqlType} (\n'${items.join("',\n'")}'\n)`);
     }
   };
 
   const copyToClipboard = () => {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(output).then(() => {
-        alert("Copied to clipboard!");
+        setCopiedQuery("Copied to clipboard!");
+        setTimeout(() => setCopiedQuery(null), 2000);
       }).catch(err => {
         console.error("Clipboard copy failed:", err);
         fallbackCopyText(output);
@@ -40,7 +44,8 @@ const App2 = () => {
     textArea.select();
     try {
       document.execCommand("copy");
-      alert("Copied to clipboard!");
+      setCopiedQuery("Copied to clipboard!");
+      setTimeout(() => setCopiedQuery(null), 2000);
     } catch (err) {
       console.error("Fallback copy failed:", err);
     }
@@ -56,11 +61,21 @@ const App2 = () => {
         <option value="IN">IN</option>
         <option value="NOT IN">NOT IN</option>
       </Form.Select>
+      {warning && (
+        <div className="alert alert-danger mt-2" role="alert">
+        {warning}
+      </div>
+      )}
 
       <Button className="mt-2" onClick={convertToSQL}>Convert</Button>
 
       <Form.Control as="textarea" rows={6} className="mt-3" readOnly value={output} />
       <Button className="mt-2" variant="secondary" onClick={copyToClipboard}>Copy</Button>
+      {copiedQuery && (
+        <div className="alert alert-success mt-2" role="alert">
+        {copiedQuery}
+      </div>
+      )}
     </Container>
   );
 };

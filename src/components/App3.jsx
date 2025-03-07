@@ -14,6 +14,7 @@ const App3 = () => {
   const [queryText, setQueryText] = useState("");
   const [copiedQuery, setCopiedQuery] = useState(null);
   const [expanded, setExpanded] = useState({}); // Track expanded queries
+  const [warning, setWarning] = useState("");
 
   // Save queries to local storage whenever they change
   useEffect(() => {
@@ -58,14 +59,14 @@ const App3 = () => {
   // Add Query Function
   const handleAddQuery = () => {
     if (queryName.trim() === "" || queryText.trim() === "") {
-      alert("Please enter both a query name and a SQL query.");
-      return;
-    }
-
-    const newQueries = [...queries, { name: queryName, query: queryText }];
-    setQueries(newQueries);
-    setQueryName("");
-    setQueryText("");
+      setWarning("Please enter a query name and query before adding.");
+      setTimeout(() => setWarning(""), 3000);      
+    } else {
+      const newQueries = [...queries, { name: queryName, query: queryText }];
+      setQueries(newQueries);
+      setQueryName("");
+      setQueryText("");
+    }    
   };
 
   // Delete Query Function
@@ -105,6 +106,11 @@ const App3 = () => {
             onChange={(e) => setQueryText(e.target.value)}
             placeholder="Enter SQL query..."
           ></textarea>
+          {warning && (
+        <div className="alert alert-danger mt-2" role="alert">
+        {warning}
+      </div>
+      )}
         </div>
 
         <Button className="btn btn-primary w-100" onClick={handleAddQuery}>
