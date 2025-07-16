@@ -9,6 +9,8 @@ import TodoApp from "./components/TodoApp";
 import XmlToJsonConverter from "./components/XmlToJsonConverter";
 import SqlPrettifier from "./components/SqlPrettifier";
 import CaseConverter from "./components/CaseConverter";
+import XmlViewer from "./components/XmlViewer";
+import D365List from "./components/D365List";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
@@ -29,6 +31,8 @@ const App = () => {
               <Nav.Link as={Link} to="/xml">XML to JSON</Nav.Link>
               <Nav.Link as={Link} to="/sql">SQL Prettifier</Nav.Link>
               <Nav.Link as={Link} to="/case">Case Converter</Nav.Link>
+              <Nav.Link as={Link} to= "/xmlviewer">XML Viewer</Nav.Link>
+              <Nav.Link as={Link} to="/d365list">D365 List</Nav.Link>
             </Nav>
             <Button variant={darkMode ? "light" : "dark"} onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? "Light Mode" : "Dark Mode"}
@@ -44,6 +48,8 @@ const App = () => {
           <Route path="/xml" element={<XmlToJsonConverter />} />
           <Route path="/sql" element={<SqlPrettifier />} />
           <Route path="/case" element={<CaseConverter />} />
+          <Route path="/xmlviewer" element={<XmlViewer />} />
+          <Route path="/d365List" element={<D365List />} />
         </Routes>
       </div>
     </Router>
@@ -51,3 +57,6 @@ const App = () => {
 };
 
 export default App;
+
+
+

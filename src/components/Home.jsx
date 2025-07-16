@@ -13,6 +13,8 @@ const Home = () => (
         { to: "/xml", title: "XML to JSON Converter" },
         { to: "/sql", title: "SQL Prettifier" },
         { to: "/case", title: "Case Converter" },
+        { to: "/xmlviewer", title: "XML Viewer" },
+        { to: "/d365list", title: "D365 List" }
       ].map((item, index) => (
         <Col key={index} xs={12} sm={6} md={4} lg={3} className="mb-3">
           <Card className="h-100 shadow">
